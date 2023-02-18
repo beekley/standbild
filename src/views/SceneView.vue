@@ -1,6 +1,7 @@
 <template>
     <div>
         {{ sceneId }}
+        <StoryTemplate :story="story" :word-set="wordSet" />
         <img :src="`/scenes/${sceneId}.JPG`" usemap="#image-map" />
         <div v-html="sceneHtml"></div>
     </div>
@@ -8,22 +9,29 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import StoryTemplate from "@/components/StoryTemplate.vue";
 
 export default defineComponent({
     name: "SceneView",
-    components: {},
+    components: { StoryTemplate },
     data() {
         return {
             sceneId: this.$route.params.id,
             sceneHtml: "",
+            story: "",
             wordSet: new Set<string>(),
         };
     },
     async created() {
         // Get scene HTML.
-        const resp = await fetch(`/scenes/${this.sceneId}.html`);
-        const html = await resp.text();
+        const htmlRes = await fetch(`/scenes/${this.sceneId}.html`);
+        const html = await htmlRes.text();
         this.sceneHtml = html;
+
+        // Get scene story.
+        const storyRes = await fetch(`/scenes/${this.sceneId}.txt`);
+        const story = await storyRes.text();
+        this.story = story;
 
         // Listen for clicks no image map areas.
         this.$el.addEventListener("click", (event: MouseEvent) => {
