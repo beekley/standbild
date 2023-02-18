@@ -16,14 +16,24 @@ export default defineComponent({
         return {
             sceneId: this.$route.params.id,
             sceneHtml: "",
+            wordSet: new Set<string>(),
         };
     },
-    // Get scene HTML.
     async created() {
+        // Get scene HTML.
         const resp = await fetch(`/scenes/${this.sceneId}.html`);
         const html = await resp.text();
-        console.log(html);
         this.sceneHtml = html;
+
+        // Listen for clicks no image map areas.
+        this.$el.addEventListener("click", (event: MouseEvent) => {
+            const t = event.target as HTMLElement;
+            if (t.tagName === "AREA") {
+                this.wordSet.add(t.title);
+                console.log(t.title, this.wordSet.size);
+                event.preventDefault();
+            }
+        });
     },
 });
 </script>
