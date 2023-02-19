@@ -17,7 +17,7 @@ export default defineComponent({
         wordArray(): Array<string> {
             const a = [""];
             if (!this.wordSet) return a;
-            return a.concat(...Array.from(this.wordSet).sort());
+            return a.concat(...Array.from(this.wordSet)); //.sort()
         },
     },
 });

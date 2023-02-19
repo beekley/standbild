@@ -1,1 +1,1 @@
-I am a {{}} and I live in a {{}}.
+I am a {guy} and I live in a {house} hi.

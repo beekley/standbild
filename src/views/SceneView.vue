@@ -1,8 +1,7 @@
 <template>
     <div>
-        {{ sceneId }}
         <StoryTemplate :story="story" :word-set="wordSet" />
-        <img :src="`/scenes/${sceneId}.JPG`" usemap="#image-map" />
+        <img :src="`/scenes/${sceneId}.jpeg`" usemap="#image-map" />
         <div v-html="sceneHtml"></div>
     </div>
 </template>
@@ -38,7 +37,6 @@ export default defineComponent({
             const t = event.target as HTMLElement;
             if (t.tagName === "AREA") {
                 this.wordSet.add(t.title);
-                console.log(t.title, this.wordSet.size);
                 event.preventDefault();
             }
         });
