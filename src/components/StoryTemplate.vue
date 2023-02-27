@@ -2,7 +2,11 @@
     <div>
         <span v-for="(part, i) in storyParts">
             <!-- TODO: Check correctness against answers -->
-            <StoryDropdown :word-set="wordSet" v-if="i > 0" />
+            <StoryDropdown
+                :word-set="wordSet"
+                :answer="answers[i - 1]"
+                v-if="i > 0"
+            />
             {{ part }}
         </span>
     </div>
