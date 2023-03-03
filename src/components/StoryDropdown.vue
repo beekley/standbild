@@ -29,5 +29,10 @@ export default defineComponent({
             return a.concat(...Array.from(this.wordSet)); //.sort()
         },
     },
+    watch: {
+        selectedWord(selectedWord: string) {
+            this.$emit("onChange", selectedWord);
+        },
+    },
 });
 </script>

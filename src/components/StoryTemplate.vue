@@ -5,6 +5,7 @@
             <StoryDropdown
                 :word-set="wordSet"
                 :answer="answers[i - 1]"
+                @onChange="onSelectedAnswerChange($event, i - 1)"
                 v-if="i > 0"
             />
             {{ part }}
@@ -26,7 +27,23 @@ export default defineComponent({
         return {
             storyParts: new Array<string>(),
             answers: new Array<string>(),
+            correctAnswers: new Array<boolean>(),
+            allCorrectAnswers: false,
         };
+    },
+    methods: {
+        onSelectedAnswerChange(selectedAnswer: string, i: number) {
+            this.correctAnswers[i] = selectedAnswer === this.answers[i];
+            // Check that there are no more incorrect answers.
+            const correctAnswerCount = this.correctAnswers.filter(
+                (a: boolean): boolean => a
+            ).length;
+            const answerCount = this.correctAnswers.length;
+            this.allCorrectAnswers = correctAnswerCount == answerCount;
+            console.log(
+                `${correctAnswerCount} / ${answerCount} answers correct.`
+            );
+        },
     },
     watch: {
         story(story) {
@@ -35,6 +52,7 @@ export default defineComponent({
             // Extract answers from the story.
             const storyParts = new Array<string>();
             const answers = new Array<string>();
+            const correctAnswers = new Array<boolean>();
             let isStory = true;
             let currentPhrase = "";
             for (let i = 0; i < this.story?.length; i += 1) {
@@ -54,6 +72,7 @@ export default defineComponent({
                             "Malformed story. Expected '{', got '}'."
                         );
                     answers.push(currentPhrase);
+                    correctAnswers.push(false);
                     currentPhrase = "";
                     isStory = true;
                     continue;
@@ -64,6 +83,7 @@ export default defineComponent({
 
             this.storyParts = storyParts;
             this.answers = answers;
+            this.correctAnswers = correctAnswers;
         },
     },
 });
