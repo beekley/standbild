@@ -1,5 +1,11 @@
 <template>
     <div>
+        <div v-if="allSelectedAnswers">
+            <p v-if="allCorrectAnswers">✅ All answers are correct!</p>
+            <p v-else-if="correctAnswerCount >= 3">
+                🟨 Three or more answers are correct.
+            </p>
+        </div>
         <span v-for="(part, i) in storyParts">
             <!-- TODO: Check correctness against answers -->
             <StoryDropdown
@@ -25,23 +31,35 @@ export default defineComponent({
     },
     data() {
         return {
-            storyParts: new Array<string>(),
             answers: new Array<string>(),
-            correctAnswers: new Array<boolean>(),
-            allCorrectAnswers: false,
+            selectedAnswers: new Array<string>(),
+            storyParts: new Array<string>(),
         };
     },
     methods: {
         onSelectedAnswerChange(selectedAnswer: string, i: number) {
-            this.correctAnswers[i] = selectedAnswer === this.answers[i];
-            // Check that there are no more incorrect answers.
-            const correctAnswerCount = this.correctAnswers.filter(
-                (a: boolean): boolean => a
-            ).length;
-            const answerCount = this.correctAnswers.length;
-            this.allCorrectAnswers = correctAnswerCount == answerCount;
+            // Store the data for the selected answer.
+            this.selectedAnswers[i] = selectedAnswer;
             console.log(
-                `${correctAnswerCount} / ${answerCount} answers correct.`
+                `${this.correctAnswerCount} / ${this.answers.length} answers correct.`
+            );
+        },
+    },
+    computed: {
+        correctAnswerCount(): number {
+            return this.selectedAnswers.filter(
+                (a: string, i: number): boolean => a === this.answers[i]
+            ).length;
+        },
+        allCorrectAnswers(): boolean {
+            return this.correctAnswerCount === this.answers.length;
+        },
+        // Whether the player has filled something in for all answers.
+        allSelectedAnswers(): boolean {
+            return (
+                this.selectedAnswers.filter(
+                    (a: string): boolean => a.length > 0
+                ).length === this.answers.length
             );
         },
     },
@@ -50,9 +68,6 @@ export default defineComponent({
             if (!this.story) return;
 
             // Extract answers from the story.
-            const storyParts = new Array<string>();
-            const answers = new Array<string>();
-            const correctAnswers = new Array<boolean>();
             let isStory = true;
             let currentPhrase = "";
             for (let i = 0; i < this.story?.length; i += 1) {
@@ -61,7 +76,7 @@ export default defineComponent({
                         throw new Error(
                             "Malformed story. Expected '}', got '{'."
                         );
-                    storyParts.push(currentPhrase);
+                    this.storyParts.push(currentPhrase);
                     currentPhrase = "";
                     isStory = false;
                     continue;
@@ -71,19 +86,15 @@ export default defineComponent({
                         throw new Error(
                             "Malformed story. Expected '{', got '}'."
                         );
-                    answers.push(currentPhrase);
-                    correctAnswers.push(false);
+                    this.answers.push(currentPhrase);
+                    this.selectedAnswers.push("");
                     currentPhrase = "";
                     isStory = true;
                     continue;
                 }
                 currentPhrase += this.story[i];
             }
-            if (currentPhrase.length > 0) storyParts.push(currentPhrase);
-
-            this.storyParts = storyParts;
-            this.answers = answers;
-            this.correctAnswers = correctAnswers;
+            if (currentPhrase.length > 0) this.storyParts.push(currentPhrase);
         },
     },
 });

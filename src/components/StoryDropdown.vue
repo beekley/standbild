@@ -5,7 +5,8 @@
                 {{ word }}
             </option>
         </select>
-        <span v-if="selectedWord === answer">✅</span>
+        <!-- Do not show whether the individual answer is correct. -->
+        <!-- <span v-if="selectedWord === answer">✅</span> -->
     </span>
 </template>
 
