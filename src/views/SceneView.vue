@@ -1,6 +1,7 @@
 <template>
     <div>
         <StoryTemplate :story="story" :word-set="wordSet" />
+        <Library :word-set="wordSet" />
         <img :src="`/scenes/${sceneId}.jpeg`" usemap="#image-map" />
         <div v-html="sceneHtml"></div>
     </div>
@@ -9,10 +10,11 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import StoryTemplate from "@/components/StoryTemplate.vue";
+import Library from "@/components/Library.vue";
 
 export default defineComponent({
     name: "SceneView",
-    components: { StoryTemplate },
+    components: { StoryTemplate, Library },
     data() {
         return {
             sceneId: this.$route.params.id,
