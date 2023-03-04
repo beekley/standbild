@@ -3,7 +3,7 @@
         <StoryTemplate :story="story" :word-set="wordSet" />
         <Library :word-set="wordSet" />
         <Scene
-            @clicked-word="(word: string) => wordSet.add(word)"
+            @clicked-word="addToWordSet"
             @clicked-link="(newSceneId: string) => sceneId = newSceneId"
             :scene-id="sceneId"
             :chapter-id="chapterId"
@@ -29,20 +29,36 @@ export default defineComponent({
     name: "ChapterView",
     components: { StoryTemplate, Library, Scene },
     data() {
+        const wordSet: Set<string> = new Set<string>();
+        if (localStorage.getItem("wordList")) {
+            const wordList: string[] = JSON.parse(
+                localStorage.getItem("wordList") || "[]"
+            );
+            wordList.forEach((word: string) => wordSet.add(word));
+        }
+
         return {
             sceneId: paramToString(this.$route.params.sceneId),
             chapterId: paramToString(this.$route.params.chapterId),
             sceneHtml: "",
             story: "",
-            wordSet: new Set<string>(),
+            wordSet,
         };
     },
-
     async created() {
         // Get scene story.
         const storyRes = await fetch(`/scenes/${this.chapterId}/story.txt`);
         const story = await storyRes.text();
         this.story = story;
+    },
+    methods: {
+        addToWordSet(word: string) {
+            this.wordSet.add(word);
+            localStorage.setItem(
+                "wordList",
+                JSON.stringify(Array.from(this.wordSet))
+            );
+        },
     },
 });
 </script>
