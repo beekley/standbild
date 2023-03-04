@@ -1,44 +1,49 @@
 <template>
     <div>
-        <StoryTemplate :story="story" :word-set="wordSet" />
-        <Library :word-set="wordSet" />
-        <img :src="`/scenes/${sceneId}.jpeg`" usemap="#image-map" />
+        <img
+            :src="`/scenes/${chapterId}/${sceneId}.jpeg`"
+            usemap="#image-map"
+        />
         <div v-html="sceneHtml"></div>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import StoryTemplate from "@/components/StoryTemplate.vue";
-import Library from "@/components/Library.vue";
 
 export default defineComponent({
     name: "SceneView",
-    components: { StoryTemplate, Library },
+    props: {
+        wordSet: Set<string>,
+    },
+    emits: {
+        clickedWord: String,
+        clickedLink: String,
+    },
     data() {
         return {
-            sceneId: this.$route.params.id,
             sceneHtml: "",
-            story: "",
-            wordSet: new Set<string>(),
+            sceneId: this.$route.params.sceneId,
+            chapterId: this.$route.params.chapterId,
         };
     },
     async created() {
         // Get scene HTML.
-        const htmlRes = await fetch(`/scenes/${this.sceneId}.html`);
+        const htmlRes = await fetch(
+            `/scenes/${this.chapterId}/${this.sceneId}.html`
+        );
         const html = await htmlRes.text();
         this.sceneHtml = html;
 
-        // Get scene story.
-        const storyRes = await fetch(`/scenes/${this.sceneId}.txt`);
-        const story = await storyRes.text();
-        this.story = story;
-
         // Listen for clicks no image map areas.
         this.$el.addEventListener("click", (event: MouseEvent) => {
-            const t = event.target as HTMLElement;
+            // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/area
+            const t = event.target as HTMLAreaElement;
             if (t.tagName === "AREA") {
-                this.wordSet.add(t.title);
+                // Add word to library.
+                if (t.title) this.$emit("clickedWord", t.title);
+                // Follow link to next scene.
+                else this.$emit("clickedLink", t.href);
                 event.preventDefault();
             }
         });

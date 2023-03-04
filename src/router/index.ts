@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "@/views/HomeView.vue";
+import ChapterView from "@/views/ChapterView.vue";
 import SceneView from "@/views/SceneView.vue";
 
 const router = createRouter({
@@ -11,9 +12,13 @@ const router = createRouter({
         //     component: HomeView,
         // },
         {
-            path: "/scene/:id",
+            path: "/scene/:chapterId/:sceneId",
             name: "scene",
-            component: SceneView,
+            component: ChapterView,
+            // children: {
+            //     path: ":sceneId",
+            //     component: SceneView,
+            // },
         },
     ],
 });
