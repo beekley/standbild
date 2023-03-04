@@ -2,7 +2,12 @@
     <div>
         <StoryTemplate :story="story" :word-set="wordSet" />
         <Library :word-set="wordSet" />
-        <SceneView @clicked-word="(word) => wordSet.add(word)" />
+        <Scene
+            @clicked-word="(word: string) => wordSet.add(word)"
+            @clicked-link="(newSceneId: string) => sceneId = newSceneId"
+            :scene-id="sceneId"
+            :chapter-id="chapterId"
+        />
     </div>
 </template>
 
@@ -10,15 +15,23 @@
 import { defineComponent } from "vue";
 import StoryTemplate from "@/components/StoryTemplate.vue";
 import Library from "@/components/Library.vue";
-import SceneView from "@/views/SceneView.vue";
+import Scene from "@/components/Scene.vue";
+
+const paramToString = (param: string | string[]): string => {
+    if (Array.isArray(param)) {
+        if (param.length > 0) return param[0];
+        else return "";
+    }
+    return param;
+};
 
 export default defineComponent({
     name: "ChapterView",
-    components: { StoryTemplate, Library, SceneView },
+    components: { StoryTemplate, Library, Scene },
     data() {
         return {
-            sceneId: this.$route.params.sceneId,
-            chapterId: this.$route.params.chapterId,
+            sceneId: paramToString(this.$route.params.sceneId),
+            chapterId: paramToString(this.$route.params.chapterId),
             sceneHtml: "",
             story: "",
             wordSet: new Set<string>(),
