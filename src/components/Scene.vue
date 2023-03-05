@@ -44,6 +44,7 @@ export default defineComponent({
         this.$el.addEventListener("click", (event: MouseEvent) => {
             // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/area
             const t = event.target as HTMLAreaElement;
+            console.log(t.href);
             if (t.tagName === "AREA") {
                 event.preventDefault();
                 // Add word to library.

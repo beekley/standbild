@@ -4,7 +4,7 @@
         <Library :word-set="wordSet" />
         <Scene
             @clicked-word="addToWordSet"
-            @clicked-link="(newSceneId: string) => sceneId = newSceneId"
+            @clicked-link="(newSceneId: string) => $router.push(newSceneId)"
             :scene-id="sceneId"
             :chapter-id="chapterId"
         />
@@ -29,17 +29,19 @@ export default defineComponent({
     name: "ChapterView",
     components: { StoryTemplate, Library, Scene },
     data() {
+        const chapterId = paramToString(this.$route.params.chapterId);
         const wordSet: Set<string> = new Set<string>();
-        if (localStorage.getItem("wordList")) {
+        // TODO: Store the localstorage key in a constant or something.
+        if (localStorage.getItem(`wordList-${chapterId}`)) {
             const wordList: string[] = JSON.parse(
-                localStorage.getItem("wordList") || "[]"
+                localStorage.getItem(`wordList-${chapterId}`) || "[]"
             );
             wordList.forEach((word: string) => wordSet.add(word));
         }
 
         return {
             sceneId: paramToString(this.$route.params.sceneId),
-            chapterId: paramToString(this.$route.params.chapterId),
+            chapterId,
             sceneHtml: "",
             story: "",
             wordSet,
@@ -55,7 +57,7 @@ export default defineComponent({
         addToWordSet(word: string) {
             this.wordSet.add(word);
             localStorage.setItem(
-                "wordList",
+                `wordList-${this.chapterId}`,
                 JSON.stringify(Array.from(this.wordSet))
             );
         },
