@@ -19,6 +19,7 @@ export default defineComponent({
         answer: String,
     },
     data() {
+        // TODO: track answers in localstorage.
         return {
             selectedWord: "",
         };
