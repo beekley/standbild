@@ -56,3 +56,15 @@ To create a new chapter:
        into `${scene name}.jpeg`.
 1. Run the dev server and you should see your scenes at
    `http://${hostname}/scene/${chaptername}/${scenename}`
+
+## Deploying changes
+
+To deploy changes to the default domain, run:
+
+```
+npm run build
+npm run deploy
+```
+
+To deploy chanes to another domain, you must set up github pages to point to that domain
+and update the `deploy` command to use that domain.
