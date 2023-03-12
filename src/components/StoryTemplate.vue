@@ -11,6 +11,7 @@
             <StoryDropdown
                 :word-set="wordSet"
                 :answer="answers[i - 1]"
+                :stored-word="selectedAnswers[i - 1]"
                 @onChange="onSelectedAnswerChange($event, i - 1)"
                 v-if="i > 0"
             />
@@ -30,9 +31,13 @@ export default defineComponent({
         story: String,
     },
     data() {
+        const selectedAnswers: Array<string> = JSON.parse(
+            localStorage.getItem(`selectedAnswers`) || "[]"
+        );
+        console.log(selectedAnswers);
         return {
             answers: new Array<string>(),
-            selectedAnswers: new Array<string>(),
+            selectedAnswers,
             storyParts: new Array<string>(),
         };
     },
@@ -42,6 +47,11 @@ export default defineComponent({
             this.selectedAnswers[i] = selectedAnswer;
             console.log(
                 `${this.correctAnswerCount} / ${this.answers.length} answers correct.`
+            );
+            // TODO: Add some ID to this, so we can save different answers per chapter.
+            localStorage.setItem(
+                `selectedAnswers`,
+                JSON.stringify(this.selectedAnswers)
             );
         },
     },
@@ -58,7 +68,7 @@ export default defineComponent({
         allSelectedAnswers(): boolean {
             return (
                 this.selectedAnswers.filter(
-                    (a: string): boolean => a.length > 0
+                    (a: string | null): boolean => a != null && a.length > 0
                 ).length === this.answers.length
             );
         },
@@ -87,7 +97,6 @@ export default defineComponent({
                             "Malformed story. Expected '{', got '}'."
                         );
                     this.answers.push(currentPhrase);
-                    this.selectedAnswers.push("");
                     currentPhrase = "";
                     isStory = true;
                     continue;

@@ -17,11 +17,12 @@ export default defineComponent({
     props: {
         wordSet: Set<string>,
         answer: String,
+        storedWord: String,
     },
     data() {
         // TODO: track answers in localstorage.
         return {
-            selectedWord: "",
+            selectedWord: this.$props.storedWord || "",
         };
     },
     computed: {
