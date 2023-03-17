@@ -34,7 +34,6 @@ export default defineComponent({
         const selectedAnswers: Array<string> = JSON.parse(
             localStorage.getItem(`selectedAnswers`) || "[]"
         );
-        console.log(selectedAnswers);
         return {
             answers: new Array<string>(),
             selectedAnswers,

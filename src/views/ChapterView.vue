@@ -72,6 +72,7 @@ export default defineComponent({
         },
     },
     async created() {
+        console.log("Opening scene:", this.chapterId, this.sceneId);
         // Get scene story.
         const storyRes = await fetch(`/scenes/${this.chapterId}/story.txt`);
         const story = await storyRes.text();
@@ -79,10 +80,12 @@ export default defineComponent({
     },
     methods: {
         addToWordSet(word: string): void {
+            console.log("Adding word to word set:", word);
             this.wordSet.add(word);
             save(this.savedGame);
         },
         followLink(newUrl: string): void {
+            console.log("Following link to:", newUrl);
             this.$router.push({
                 path: newUrl,
                 query: { savedGameId: this.savedGameId },

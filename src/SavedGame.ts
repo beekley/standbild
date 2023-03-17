@@ -20,6 +20,8 @@ type SerializedSavedGame = {
 };
 
 export function loadAll(): Array<SavedGame> {
+    console.log("Loading all games");
+
     // Load the saved games string from local storage.
     const stringifiedSavedGames = localStorage.getItem(SAVED_GAMES_KEY);
     if (!stringifiedSavedGames || stringifiedSavedGames.length == 0) return [];
@@ -34,6 +36,8 @@ export function loadAll(): Array<SavedGame> {
 }
 
 export function load(savedGameId: string): SavedGame | undefined {
+    console.log("Loading game:", savedGameId);
+
     // Load the saved games string from local storage.
     const stringifiedSavedGames = localStorage.getItem(SAVED_GAMES_KEY);
     if (!stringifiedSavedGames || stringifiedSavedGames.length == 0)
@@ -59,9 +63,10 @@ export function load(savedGameId: string): SavedGame | undefined {
 }
 
 export function save(savedGame: SavedGame): void {
+    console.log("Saving game:", savedGame.id);
+
     // Serialize as something that can be stringified as JSON.
     const serializedSavedGame = serialize(savedGame);
-    console.log(serializedSavedGame);
 
     // Open the existing saved games array in local storage.
     const stringifiedSavedGames = localStorage.getItem(SAVED_GAMES_KEY) || "[]";
@@ -76,7 +81,6 @@ export function save(savedGame: SavedGame): void {
         serializedSavedGames[existingSavedGameIndex] = serializedSavedGame;
     // ... or add it as a new agme.
     else serializedSavedGames.push(serializedSavedGame);
-    console.log(serializedSavedGames);
 
     // Save in local storage.
     localStorage.setItem(SAVED_GAMES_KEY, JSON.stringify(serializedSavedGames));

@@ -64,7 +64,6 @@ export default defineComponent({
         loadGame(savedGameId: string, event: MouseEvent) {
             const button = event.target as HTMLButtonElement;
             this.selectedSavedGameId = savedGameId;
-            console.log(this.savedGames.get(savedGameId));
         },
         openChapter(chapterId: string) {
             // TODO: Point to the implicit first scene in the chapter.
