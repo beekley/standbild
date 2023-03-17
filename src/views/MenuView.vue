@@ -68,9 +68,8 @@ export default defineComponent({
             this.selectedSavedGameId = savedGameId;
         },
         openChapter(chapterId: string): void {
-            // TODO: Point to the implicit first scene in the chapter.
             router.replace({
-                path: `/scene/${chapterId}/outside`,
+                path: `/chapter/${chapterId}`,
                 query: { savedGameId: this.selectedSavedGameId },
             });
         },

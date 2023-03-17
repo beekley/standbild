@@ -21,6 +21,7 @@ import { load, save } from "@/SavedGame";
 import router from "@/router";
 
 const CHAPTER_ID = "goldenidol";
+const MAIN_SCENE_ID = "main";
 
 /**
  * Convert a parameter from the URL into a non-null string.
@@ -57,9 +58,14 @@ export default defineComponent({
             save(savedGame);
         }
 
+        // If there's no scene ID, route to the main scene in the chapter.
+        const sceneId = paramToString(
+            this.$route.params.sceneId || MAIN_SCENE_ID
+        );
+
         return {
             savedGameId,
-            sceneId: paramToString(this.$route.params.sceneId),
+            sceneId,
             chapterId,
             sceneHtml: "",
             story: "",
@@ -74,7 +80,7 @@ export default defineComponent({
     async created() {
         console.log("Opening scene:", this.chapterId, this.sceneId);
         // Get scene story.
-        const storyRes = await fetch(`/scenes/${this.chapterId}/story.txt`);
+        const storyRes = await fetch(`/chapters/${this.chapterId}/story.txt`);
         const story = await storyRes.text();
         this.story = story;
     },
@@ -84,10 +90,10 @@ export default defineComponent({
             this.wordSet.add(word);
             save(this.savedGame);
         },
-        followLink(newUrl: string): void {
-            console.log("Following link to:", newUrl);
+        followLink(sceneId: string): void {
+            console.log("Following link to new scene:", sceneId);
             this.$router.push({
-                path: newUrl,
+                path: `/chapter/${this.chapterId}/${sceneId}`,
                 query: { savedGameId: this.savedGameId },
             });
         },

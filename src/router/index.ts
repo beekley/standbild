@@ -11,8 +11,13 @@ const router = createRouter({
             component: MenuView,
         },
         {
-            path: "/scene/:chapterId/:sceneId",
-            name: "scene",
+            path: "/chapter/:chapterId",
+            name: "chapter - main",
+            component: ChapterView,
+        },
+        {
+            path: "/chapter/:chapterId/:sceneId",
+            name: "chapter",
             component: ChapterView,
         },
     ],

@@ -34,11 +34,13 @@ They have the following folder structure:
 
 ```
 └─public
-  └─scenes
-    ├─chapter1
+  └─chapters
+    ├─chapter1 -- A directory for a given chapter, which can be named anything.
     │ ├─story.txt -- The story for the entire shapter.
-    │ ├─scene1.jpeg -- The image for one scene in the chapter.
-    │ ├─scene1.html -- The HTML imagemap for one scene in the chapter.
+    │ ├─main.jpeg -- The image for the first scene in the chapter.
+    │ ├─main.html -- The HTML imagemap for the first scene in the chapter.
+    │ ├─scene2.jpeg -- Subseqent scenes can have arbitrary names...
+    │ ├─scene2.html -- ...as long as they have both jpeg image and html files.
     │ └─...
     └─...
 ```

@@ -1,7 +1,7 @@
 <template>
     <div>
         <img
-            :src="`/scenes/${chapterId}/${sceneId}.jpeg`"
+            :src="`/chapters/${chapterId}/${sceneId}.jpeg`"
             usemap="#image-map"
         />
         <div v-html="sceneHtml"></div>
@@ -35,7 +35,7 @@ export default defineComponent({
     async created() {
         // Get scene HTML.
         const htmlRes = await fetch(
-            `/scenes/${this.chapterId}/${this.sceneId}.html`
+            `/chapters/${this.chapterId}/${this.sceneId}.html`
         );
         const html = await htmlRes.text();
         this.sceneHtml = html;
@@ -49,12 +49,11 @@ export default defineComponent({
                 // Add word to library.
                 if (t.title) this.$emit("clickedWord", t.title);
                 // Follow link to next scene.
-                else
-                    this.$emit(
-                        "clickedLink",
-                        // Only get the last part of the URL.
-                        t.href.substring(t.href.lastIndexOf("/") + 1)
-                    );
+                else {
+                    // Only get the last part of the URL.
+                    const urlParts = t.href.split("/");
+                    this.$emit("clickedLink", urlParts[urlParts.length - 1]);
+                }
             }
         });
     },
