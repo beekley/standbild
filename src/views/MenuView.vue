@@ -10,6 +10,9 @@
                     <button @click="loadGame(savedGame.id, $event)">
                         {{ savedGame.id }}
                     </button>
+                    <span>
+                        {{ savedGame.chapters.size }} chapters started
+                    </span>
                 </li>
             </ul>
         </div>
@@ -36,13 +39,10 @@ export default defineComponent({
     data() {
         return {
             selectedSavedGameId: "",
+            savedGamesArray: loadAll(),
         };
     },
     computed: {
-        // TODO: This only runs on start. Fix that.
-        savedGamesArray(): Array<SavedGame> {
-            return loadAll();
-        },
         savedGames(): Map<string, SavedGame> {
             const map = new Map<string, SavedGame>();
             this.savedGamesArray.forEach((g) => map.set(g.id, g));
@@ -54,23 +54,28 @@ export default defineComponent({
         },
     },
     methods: {
-        newGame() {
+        newGame(): void {
             const newGame: SavedGame = {
                 id: new Date().toLocaleString("en-US"),
                 chapters: new Map<string, SavedChapter>(),
             };
             save(newGame);
+            // Vue caches the saved games even with a computed prop, so force refresh it.
+            this.reloadSavedGames();
         },
-        loadGame(savedGameId: string, event: MouseEvent) {
+        loadGame(savedGameId: string, event: MouseEvent): void {
             const button = event.target as HTMLButtonElement;
             this.selectedSavedGameId = savedGameId;
         },
-        openChapter(chapterId: string) {
+        openChapter(chapterId: string): void {
             // TODO: Point to the implicit first scene in the chapter.
             router.replace({
                 path: `/scene/${chapterId}/outside`,
                 query: { savedGameId: this.selectedSavedGameId },
             });
+        },
+        reloadSavedGames(): void {
+            this.savedGamesArray = loadAll();
         },
     },
 });
