@@ -4,7 +4,7 @@
         <Library :word-set="wordSet" />
         <Scene
             @clicked-word="addToWordSet"
-            @clicked-link="(newSceneId: string) => $router.push(newSceneId)"
+            @clicked-link="followLink"
             :scene-id="sceneId"
             :chapter-id="chapterId"
         />
@@ -16,13 +16,25 @@ import { defineComponent } from "vue";
 import StoryTemplate from "@/components/StoryTemplate.vue";
 import Library from "@/components/Library.vue";
 import Scene from "@/components/Scene.vue";
+import type { LocationQueryValue } from "vue-router";
+import { load, save } from "@/SavedGame";
+import router from "@/router";
 
-const paramToString = (param: string | string[]): string => {
+const CHAPTER_ID = "goldenidol";
+
+/**
+ * Convert a parameter from the URL into a non-null string.
+ * @param param
+ */
+const paramToString = (
+    param: string | string[] | LocationQueryValue | LocationQueryValue[]
+): string => {
     if (Array.isArray(param)) {
-        if (param.length > 0) return param[0];
+        if (param.length > 0)
+            return typeof param[0] === "string" ? param[0] : "";
         else return "";
     }
-    return param;
+    return typeof param === "string" ? param : "";
 };
 
 export default defineComponent({
@@ -30,22 +42,34 @@ export default defineComponent({
     components: { StoryTemplate, Library, Scene },
     data() {
         const chapterId = paramToString(this.$route.params.chapterId);
-        const wordSet: Set<string> = new Set<string>();
-        // TODO: Store the localstorage key in a constant or something.
-        if (localStorage.getItem(`wordList-${chapterId}`)) {
-            const wordList: string[] = JSON.parse(
-                localStorage.getItem(`wordList-${chapterId}`) || "[]"
-            );
-            wordList.forEach((word: string) => wordSet.add(word));
+        const savedGameId = paramToString(this.$route.query["savedGameId"]);
+
+        // If no saved game, re-route to home.
+        const unassertedSavedGame = load(savedGameId);
+        if (!unassertedSavedGame) router.replace({ path: "/" });
+        const savedGame = unassertedSavedGame!; // Since we know this exists now.
+
+        // Add the current chapter to the saved game, if not present.
+        if (!savedGame.chapters.get(CHAPTER_ID)) {
+            savedGame.chapters.set(CHAPTER_ID, {
+                wordSet: new Set<string>(),
+            });
+            save(savedGame);
         }
 
         return {
+            savedGameId,
             sceneId: paramToString(this.$route.params.sceneId),
             chapterId,
             sceneHtml: "",
             story: "",
-            wordSet,
+            savedGame,
         };
+    },
+    computed: {
+        wordSet(): Set<string> {
+            return this.savedGame.chapters.get(CHAPTER_ID)!.wordSet;
+        },
     },
     async created() {
         // Get scene story.
@@ -54,12 +78,15 @@ export default defineComponent({
         this.story = story;
     },
     methods: {
-        addToWordSet(word: string) {
+        addToWordSet(word: string): void {
             this.wordSet.add(word);
-            localStorage.setItem(
-                `wordList-${this.chapterId}`,
-                JSON.stringify(Array.from(this.wordSet))
-            );
+            save(this.savedGame);
+        },
+        followLink(newUrl: string): void {
+            this.$router.push({
+                path: newUrl,
+                query: { savedGameId: this.savedGameId },
+            });
         },
     },
 });

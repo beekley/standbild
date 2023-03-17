@@ -20,7 +20,6 @@ export default defineComponent({
         storedWord: String,
     },
     data() {
-        // TODO: track answers in localstorage.
         return {
             selectedWord: this.$props.storedWord || "",
         };

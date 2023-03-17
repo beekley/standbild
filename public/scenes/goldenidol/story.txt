@@ -1,0 +1,1 @@
+{henchman} killed the {guard} by {fire} while the {guard} ran away.
