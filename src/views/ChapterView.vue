@@ -20,7 +20,7 @@ import type { LocationQueryValue } from "vue-router";
 import { load, save } from "@/SavedGame";
 import router from "@/router";
 
-const CHAPTER_ID = "goldenidol";
+// const CHAPTER_ID = "goldenidol";
 const MAIN_SCENE_ID = "main";
 
 /**
@@ -51,8 +51,8 @@ export default defineComponent({
         const savedGame = unassertedSavedGame!; // Since we know this exists now.
 
         // Add the current chapter to the saved game, if not present.
-        if (!savedGame.chapters.get(CHAPTER_ID)) {
-            savedGame.chapters.set(CHAPTER_ID, {
+        if (!savedGame.chapters.get(chapterId)) {
+            savedGame.chapters.set(chapterId, {
                 wordSet: new Set<string>(),
             });
             save(savedGame);
@@ -74,7 +74,7 @@ export default defineComponent({
     },
     computed: {
         wordSet(): Set<string> {
-            return this.savedGame.chapters.get(CHAPTER_ID)!.wordSet;
+            return this.savedGame.chapters.get(this.chapterId)!.wordSet;
         },
     },
     async created() {

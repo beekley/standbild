@@ -48,10 +48,10 @@ export default defineComponent({
                 `${this.correctAnswerCount} / ${this.answers.length} answers correct.`
             );
             // TODO: Add some ID to this, so we can save different answers per chapter.
-            localStorage.setItem(
-                `selectedAnswers`,
-                JSON.stringify(this.selectedAnswers)
-            );
+            // localStorage.setItem(
+            //     `selectedAnswers`,
+            //     JSON.stringify(this.selectedAnswers)
+            // );
         },
     },
     computed: {
