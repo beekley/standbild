@@ -1,9 +1,6 @@
 <template>
     <div>
-        <img
-            :src="`/chapters/${chapterId}/${sceneId}.jpeg`"
-            usemap="#image-map"
-        />
+        <img :src="imgSrc" usemap="#image-map" />
         <div v-html="sceneHtml"></div>
     </div>
 </template>
@@ -30,6 +27,7 @@ export default defineComponent({
     data() {
         return {
             sceneHtml: "",
+            imgSrc: "",
         };
     },
     async created() {
@@ -39,6 +37,19 @@ export default defineComponent({
         );
         const html = await htmlRes.text();
         this.sceneHtml = html;
+
+        // Get scene image with an unknown file extension.
+        const exts = ["png", "gif", "jpeg", "jpg"];
+        for (const ext of exts) {
+            console.log("Trying to get scene image with extension:", ext);
+            const src = `/chapters/${this.chapterId}/${this.sceneId}.${ext}`;
+            const res = await fetch(src);
+            if (res.status === 200) {
+                console.log("Found image for scene:", src);
+                this.imgSrc = src;
+                break;
+            }
+        }
 
         // Listen for clicks no image map areas.
         this.$el.addEventListener("click", (event: MouseEvent) => {
@@ -57,5 +68,11 @@ export default defineComponent({
             }
         });
     },
+    // methods: {
+    //     async getImgSrc(): Promise<string | undefined> {
+
+    //         return undefined;
+    //     },
+    // },
 });
 </script>
