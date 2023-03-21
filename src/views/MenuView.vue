@@ -19,7 +19,12 @@
         <!-- Chapters -->
         <!-- TODO: Dynamically populate this list with available chapters. -->
         <div v-if="selectedSaveGame">
-            <button @click="openChapter('goldenidol')">goldenidol</button>
+            <button
+                v-for="chapterId in chapterIds"
+                @click="openChapter(chapterId)"
+            >
+                {{ chapterId }}
+            </button>
         </div>
     </div>
 </template>
@@ -38,6 +43,8 @@ export default defineComponent({
     name: "MenuView",
     data() {
         return {
+            // TODO: make this list dynamic.
+            chapterIds: ["goldenidol", "hotel"],
             selectedSavedGameId: "",
             savedGamesArray: loadAll(),
         };
