@@ -1,1 +1,1 @@
-The hotel is.
+The {car} was parked under the {sun}. The {television} was turned off in the room.
