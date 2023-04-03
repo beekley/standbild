@@ -1,31 +1,47 @@
 <template>
-    <div class="menu">
-        <!-- New Game Button -->
-        <p @click="newGame" class="bigButton">New Game</p>
-        <!-- Saved games -->
-        <div v-if="savedGamesArray.length > 0">
-            <p @click="showSavedGames = !showSavedGames" class="bigButton">
-                Load Game
-            </p>
-            <ul v-if="showSavedGames">
-                <li v-for="savedGame in savedGamesArray" :key="savedGame.id">
-                    <button @click="loadGame(savedGame.id, $event)">
-                        {{ savedGame.id }}
-                    </button>
-                    <span>
-                        {{ savedGame.chapters.size }} chapters started
-                    </span>
-                </li>
-            </ul>
-        </div>
-        <!-- Chapters -->
-        <div v-if="selectedSaveGame">
+    <div class="columns is-centered">
+        <div class="column is-one-quarter has-text-centered">
+            <!-- New Game Button -->
             <button
-                v-for="chapterId in chapterIds"
-                @click="openChapter(chapterId)"
+                @click="newGame"
+                class="button is-fullwidth is-large is-light"
             >
-                {{ chapterId }}
+                New Game
             </button>
+            <!-- Saved games -->
+            <div v-if="savedGamesArray.length > 0">
+                <button
+                    @click="showSavedGames = !showSavedGames"
+                    class="button is-fullwidth is-large is-light"
+                >
+                    Load Game
+                </button>
+                <ul v-if="showSavedGames">
+                    <li
+                        v-for="savedGame in savedGamesArray"
+                        :key="savedGame.id"
+                    >
+                        <button
+                            @click="loadGame(savedGame.id, $event)"
+                            class="button is-text"
+                        >
+                            {{ savedGame.id }}</button
+                        ><br />
+                        <span class="">
+                            {{ savedGame.chapters.size }} chapters started
+                        </span>
+                    </li>
+                </ul>
+            </div>
+            <!-- Chapters -->
+            <div v-if="selectedSaveGame">
+                <button
+                    v-for="chapterId in chapterIds"
+                    @click="openChapter(chapterId)"
+                >
+                    {{ chapterId }}
+                </button>
+            </div>
         </div>
     </div>
 </template>
@@ -88,11 +104,3 @@ export default defineComponent({
     },
 });
 </script>
-
-<style>
-.bigButton {
-    /* color */
-}
-.menu {
-}
-</style>
