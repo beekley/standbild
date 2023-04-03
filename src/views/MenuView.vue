@@ -4,7 +4,7 @@
             <!-- New Game Button -->
             <button
                 @click="newGame"
-                class="button is-fullwidth is-large is-light"
+                class="button is-fullwidth is-large is-dark"
             >
                 New Game
             </button>
@@ -12,7 +12,7 @@
             <div v-if="savedGamesArray.length > 0">
                 <button
                     @click="showSavedGames = !showSavedGames"
-                    class="button is-fullwidth is-large is-light"
+                    class="button is-fullwidth is-large is-dark"
                 >
                     Load Game
                 </button>
@@ -23,7 +23,7 @@
                     >
                         <button
                             @click="loadGame(savedGame.id, $event)"
-                            class="button is-text"
+                            class="button is-text is-inverted"
                         >
                             {{ savedGame.id }}</button
                         ><br />
