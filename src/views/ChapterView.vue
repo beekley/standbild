@@ -20,7 +20,6 @@ import type { LocationQueryValue } from "vue-router";
 import { load, save } from "@/SavedGame";
 import router from "@/router";
 
-// const CHAPTER_ID = "goldenidol";
 const MAIN_SCENE_ID = "main";
 
 /**

@@ -1,9 +1,9 @@
 <template>
     <div>
         <div v-if="allSelectedAnswers">
-            <p v-if="allCorrectAnswers">✅ All answers are correct!</p>
+            <p v-if="allCorrectAnswers">All answers are correct!</p>
             <p v-else-if="correctAnswerCount >= 3">
-                🟨 Three or more answers are correct.
+                Three or more answers are correct.
             </p>
         </div>
         <span v-for="(part, i) in storyParts">

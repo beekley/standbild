@@ -1,11 +1,13 @@
 <template>
-    <div>
+    <div class="menu">
         <!-- New Game Button -->
-        <button @click="newGame">New Game</button>
+        <p @click="newGame" class="bigButton">New Game</p>
         <!-- Saved games -->
         <div v-if="savedGamesArray.length > 0">
-            <p>Load Game:</p>
-            <ul>
+            <p @click="showSavedGames = !showSavedGames" class="bigButton">
+                Load Game
+            </p>
+            <ul v-if="showSavedGames">
                 <li v-for="savedGame in savedGamesArray" :key="savedGame.id">
                     <button @click="loadGame(savedGame.id, $event)">
                         {{ savedGame.id }}
@@ -17,7 +19,6 @@
             </ul>
         </div>
         <!-- Chapters -->
-        <!-- TODO: Dynamically populate this list with available chapters. -->
         <div v-if="selectedSaveGame">
             <button
                 v-for="chapterId in chapterIds"
@@ -47,6 +48,7 @@ export default defineComponent({
             chapterIds: ["goldenidol", "hotel"],
             selectedSavedGameId: "",
             savedGamesArray: loadAll(),
+            showSavedGames: false,
         };
     },
     computed: {
@@ -86,3 +88,11 @@ export default defineComponent({
     },
 });
 </script>
+
+<style>
+.bigButton {
+    /* color */
+}
+.menu {
+}
+</style>
