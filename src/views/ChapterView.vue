@@ -1,13 +1,25 @@
 <template>
     <div>
-        <StoryTemplate :story="story" :word-set="wordSet" />
-        <Library :word-set="wordSet" />
-        <Scene
-            @clicked-word="addToWordSet"
-            @clicked-link="followLink"
-            :scene-id="sceneId"
-            :chapter-id="chapterId"
-        />
+        <div class="columns is-centered">
+            <div class="column">
+                <Library :word-set="wordSet" />
+            </div>
+            <div class="column is-three-quarters has-text-centered">
+                <Scene
+                    @clicked-word="addToWordSet"
+                    @clicked-link="followLink"
+                    :scene-id="sceneId"
+                    :chapter-id="chapterId"
+                />
+            </div>
+            <div class="column"></div>
+        </div>
+
+        <div class="columns is-centered">
+            <div class="column is-three-quarters">
+                <StoryTemplate :story="story" :word-set="wordSet" />
+            </div>
+        </div>
     </div>
 </template>
 
@@ -20,7 +32,6 @@ import type { LocationQueryValue } from "vue-router";
 import { load, save } from "@/SavedGame";
 import router from "@/router";
 
-// const CHAPTER_ID = "goldenidol";
 const MAIN_SCENE_ID = "main";
 
 /**
