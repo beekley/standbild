@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="has-text-centered">
         <div v-if="allSelectedAnswers">
             <p v-if="allCorrectAnswers">All answers are correct!</p>
             <p v-else-if="correctAnswerCount >= 3">
@@ -47,11 +47,6 @@ export default defineComponent({
             console.log(
                 `${this.correctAnswerCount} / ${this.answers.length} answers correct.`
             );
-            // TODO: Add some ID to this, so we can save different answers per chapter.
-            // localStorage.setItem(
-            //     `selectedAnswers`,
-            //     JSON.stringify(this.selectedAnswers)
-            // );
         },
     },
     computed: {
