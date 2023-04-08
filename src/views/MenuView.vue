@@ -1,40 +1,40 @@
 <template>
     <div class="columns is-centered">
         <div class="column is-one-quarter has-text-centered">
-            <!-- New Game Button -->
-            <button
-                @click="newGame"
-                class="button is-fullwidth is-large is-dark"
-            >
-                New Game
-            </button>
-            <!-- Saved games -->
-            <div v-if="savedGamesArray.length > 0">
+            <!-- Main Menu -->
+            <div v-if="state == State.Main">
+                <!-- New Game Button -->
                 <button
-                    @click="showSavedGames = !showSavedGames"
+                    @click="newGame"
                     class="button is-fullwidth is-large is-dark"
+                >
+                    New Game
+                </button>
+                <!-- Saved games -->
+                <button
+                    @click="state = State.LoadGame"
+                    class="button is-fullwidth is-large is-dark"
+                    v-if="savedGamesArray.length > 0"
                 >
                     Load Game
                 </button>
-                <ul v-if="showSavedGames">
-                    <li
-                        v-for="savedGame in savedGamesArray"
-                        :key="savedGame.id"
-                    >
-                        <button
-                            @click="loadGame(savedGame.id, $event)"
-                            class="button is-text is-inverted"
-                        >
-                            {{ savedGame.id }}</button
-                        ><br />
-                        <span class="">
-                            {{ savedGame.chapters.size }} chapters started
-                        </span>
-                    </li>
-                </ul>
             </div>
-            <!-- Chapters -->
-            <div v-if="selectedSaveGame">
+            <!-- Load Game Menu -->
+            <ul v-if="state == State.LoadGame">
+                <li v-for="savedGame in savedGamesArray" :key="savedGame.id">
+                    <button
+                        @click="loadGame(savedGame.id)"
+                        class="button is-text is-inverted"
+                    >
+                        {{ savedGame.id }}</button
+                    ><br />
+                    <span class="">
+                        {{ savedGame.chapters.size }} chapters started
+                    </span>
+                </li>
+            </ul>
+            <!-- Select Chapter Menu -->
+            <div v-if="state == State.SelectChapter">
                 <button
                     v-for="chapterId in chapterIds"
                     @click="openChapter(chapterId)"
@@ -56,6 +56,13 @@ import {
 import router from "@/router";
 import { defineComponent } from "vue";
 
+// TODO: use the router so the back button works.
+enum State {
+    Main,
+    LoadGame,
+    SelectChapter,
+}
+
 export default defineComponent({
     name: "MenuView",
     data() {
@@ -64,7 +71,9 @@ export default defineComponent({
             chapterIds: ["goldenidol", "hotel"],
             selectedSavedGameId: "",
             savedGamesArray: loadAll(),
-            showSavedGames: false,
+            state: State.Main,
+            // Add the enum as a variable so the template can use it.
+            State,
         };
     },
     computed: {
@@ -87,13 +96,14 @@ export default defineComponent({
             save(newGame);
             // Vue caches the saved games even with a computed prop, so force refresh it.
             this.reloadSavedGames();
+            this.loadGame(newGame.id);
         },
-        loadGame(savedGameId: string, event: MouseEvent): void {
-            const button = event.target as HTMLButtonElement;
+        loadGame(savedGameId: string): void {
             this.selectedSavedGameId = savedGameId;
+            this.state = State.SelectChapter;
         },
         openChapter(chapterId: string): void {
-            router.replace({
+            router.push({
                 path: `/chapter/${chapterId}`,
                 query: { savedGameId: this.selectedSavedGameId },
             });
