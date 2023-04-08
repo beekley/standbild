@@ -1,46 +1,54 @@
 <template>
-    <div class="columns is-centered">
-        <div class="column is-one-quarter has-text-centered">
-            <!-- Main Menu -->
-            <div v-if="state == State.Main">
-                <!-- New Game Button -->
-                <button
-                    @click="newGame"
-                    class="button is-fullwidth is-large is-dark"
-                >
-                    New Game
-                </button>
-                <!-- Saved games -->
-                <button
-                    @click="state = State.LoadGame"
-                    class="button is-fullwidth is-large is-dark"
-                    v-if="savedGamesArray.length > 0"
-                >
-                    Load Game
-                </button>
-            </div>
-            <!-- Load Game Menu -->
-            <ul v-if="state == State.LoadGame">
-                <li v-for="savedGame in savedGamesArray" :key="savedGame.id">
+    <div class="container has-text-centered">
+        <p class="title is-1 is-italic has-text-danger">Standbild</p>
+        <p class="subtitle is-4 has-text-danger-dark">a mystery game</p>
+        <div class="columns is-centered">
+            <div class="column is-one-quarter">
+                <!-- Main Menu -->
+                <div v-if="state == State.Main">
+                    <!-- New Game Button -->
                     <button
-                        @click="loadGame(savedGame.id)"
-                        class="button is-text is-inverted"
+                        @click="newGame"
+                        class="button is-fullwidth is-large is-dark m-2"
                     >
-                        {{ savedGame.id }}</button
-                    ><br />
-                    <span class="">
-                        {{ savedGame.chapters.size }} chapters started
-                    </span>
-                </li>
-            </ul>
-            <!-- Select Chapter Menu -->
-            <div v-if="state == State.SelectChapter">
-                <button
-                    v-for="chapterId in chapterIds"
-                    @click="openChapter(chapterId)"
-                >
-                    {{ chapterId }}
-                </button>
+                        New Game
+                    </button>
+                    <!-- Saved games -->
+                    <button
+                        @click="state = State.LoadGame"
+                        class="button is-fullwidth is-large is-dark m-2"
+                        v-if="savedGamesArray.length > 0"
+                    >
+                        Load Game
+                    </button>
+                </div>
+                <!-- Load Game Menu -->
+                <ul v-if="state == State.LoadGame">
+                    <li
+                        v-for="savedGame in savedGamesArray"
+                        :key="savedGame.id"
+                    >
+                        <button
+                            @click="loadGame(savedGame.id)"
+                            class="button is-text is-inverted"
+                        >
+                            {{ savedGame.id }}</button
+                        ><br />
+                        <span class="">
+                            {{ savedGame.chapters.size }} chapters started
+                        </span>
+                    </li>
+                </ul>
+                <!-- Select Chapter Menu -->
+                <div v-if="state == State.SelectChapter">
+                    <button
+                        v-for="chapterId in chapterIds"
+                        @click="openChapter(chapterId)"
+                        class="button is-fullwidth is-large is-dark m-2"
+                    >
+                        {{ chapterId }}
+                    </button>
+                </div>
             </div>
         </div>
     </div>
