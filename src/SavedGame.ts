@@ -1,7 +1,7 @@
 export const SAVED_GAMES_KEY = "savedGames";
 
 export type SavedChapter = {
-    wordSet: Set<string>;
+    library: Set<string>;
 };
 
 export type SavedGame = {
@@ -11,7 +11,7 @@ export type SavedGame = {
 
 type SerializedChapter = {
     id: string;
-    wordArray: Array<string>;
+    libraryArray: Array<string>;
 };
 
 type SerializedSavedGame = {
@@ -93,7 +93,7 @@ function serialize(savedGame: SavedGame): SerializedSavedGame {
         serializedChapters.push({
             id,
             // Sets are not JSON, so convert to array.
-            wordArray: Array.from(c.wordSet),
+            libraryArray: Array.from(c.library),
         });
     });
     const serializedSavedGame: SerializedSavedGame = {
@@ -109,9 +109,9 @@ function deserialize(serializedSavedGame: SerializedSavedGame): SavedGame {
     if (!serializedSavedGame.serializedChapters)
         serializedSavedGame.serializedChapters = [];
     serializedSavedGame.serializedChapters.forEach((c) => {
-        const wordSet = new Set<string>();
-        c.wordArray.forEach((w) => wordSet.add(w));
-        chapters.set(c.id, { wordSet });
+        const library = new Set<string>();
+        c.libraryArray.forEach((w) => library.add(w));
+        chapters.set(c.id, { library });
     });
     const savedGame: SavedGame = {
         id: serializedSavedGame.id,

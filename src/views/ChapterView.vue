@@ -2,11 +2,11 @@
     <div>
         <div class="columns is-centered">
             <div class="column">
-                <Library :word-set="wordSet" />
+                <Library :library="library" />
             </div>
             <div class="column is-three-quarters has-text-centered">
                 <Scene
-                    @clicked-word="addToWordSet"
+                    @clicked-word="addTolibrary"
                     @clicked-link="followLink"
                     :scene-id="sceneId"
                     :chapter-id="chapterId"
@@ -17,7 +17,7 @@
 
         <div class="columns is-centered">
             <div class="column is-three-quarters">
-                <StoryTemplate :story="story" :word-set="wordSet" />
+                <StoryTemplate :story="story" :library="library" />
             </div>
         </div>
     </div>
@@ -64,7 +64,7 @@ export default defineComponent({
         // Add the current chapter to the saved game, if not present.
         if (!savedGame.chapters.get(chapterId)) {
             savedGame.chapters.set(chapterId, {
-                wordSet: new Set<string>(),
+                library: new Set<string>(),
             });
             save(savedGame);
         }
@@ -84,8 +84,8 @@ export default defineComponent({
         };
     },
     computed: {
-        wordSet(): Set<string> {
-            return this.savedGame.chapters.get(this.chapterId)!.wordSet;
+        library(): Set<string> {
+            return this.savedGame.chapters.get(this.chapterId)!.library;
         },
     },
     async created() {
@@ -96,9 +96,9 @@ export default defineComponent({
         this.story = story;
     },
     methods: {
-        addToWordSet(word: string): void {
+        addTolibrary(word: string): void {
             console.log("Adding word to word set:", word);
-            this.wordSet.add(word);
+            this.library.add(word);
             save(this.savedGame);
         },
         followLink(sceneId: string): void {

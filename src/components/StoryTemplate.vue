@@ -9,8 +9,8 @@
         <span v-for="(part, i) in storyParts">
             <!-- TODO: Check correctness against answers -->
             <StoryDropdown
-                :word-set="wordSet"
-                :answer="answers[i - 1]"
+                :word-set="library"
+                :answer="correctAnswers[i - 1]"
                 :stored-word="selectedAnswers[i - 1]"
                 @onChange="onSelectedAnswerChange($event, i - 1)"
                 v-if="i > 0"
@@ -27,7 +27,7 @@ import StoryDropdown from "./StoryDropdown.vue";
 export default defineComponent({
     components: { StoryDropdown },
     props: {
-        wordSet: Set<string>,
+        library: Set<string>,
         story: String,
     },
     data() {
@@ -35,7 +35,9 @@ export default defineComponent({
             localStorage.getItem(`selectedAnswers`) || "[]"
         );
         return {
-            answers: new Array<string>(),
+            // The "correct" words in the story.
+            correctAnswers: new Array<string>(),
+            // The player-selected words.
             selectedAnswers,
             storyParts: new Array<string>(),
         };
@@ -45,25 +47,25 @@ export default defineComponent({
             // Store the data for the selected answer.
             this.selectedAnswers[i] = selectedAnswer;
             console.log(
-                `${this.correctAnswerCount} / ${this.answers.length} answers correct.`
+                `${this.correctAnswerCount} / ${this.correctAnswers.length} answers correct.`
             );
         },
     },
     computed: {
         correctAnswerCount(): number {
             return this.selectedAnswers.filter(
-                (a: string, i: number): boolean => a === this.answers[i]
+                (a: string, i: number): boolean => a === this.correctAnswers[i]
             ).length;
         },
         allCorrectAnswers(): boolean {
-            return this.correctAnswerCount === this.answers.length;
+            return this.correctAnswerCount === this.correctAnswers.length;
         },
         // Whether the player has filled something in for all answers.
         allSelectedAnswers(): boolean {
             return (
                 this.selectedAnswers.filter(
                     (a: string | null): boolean => a != null && a.length > 0
-                ).length === this.answers.length
+                ).length === this.correctAnswers.length
             );
         },
     },
@@ -90,7 +92,7 @@ export default defineComponent({
                         throw new Error(
                             "Malformed story. Expected '{', got '}'."
                         );
-                    this.answers.push(currentPhrase);
+                    this.correctAnswers.push(currentPhrase);
                     currentPhrase = "";
                     isStory = true;
                     continue;
