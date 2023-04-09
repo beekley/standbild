@@ -17,7 +17,13 @@
 
         <div class="columns is-centered">
             <div class="column is-three-quarters">
-                <StoryTemplate :story="story" :library="library" />
+                <!-- TODO: figure out how to save selected answers. -->
+                <StoryTemplate
+                    :story="story"
+                    :library="library"
+                    :selected-answers="selectedAnswers"
+                    @on-selected-answers-change="onSelectedAnswersChange"
+                />
             </div>
         </div>
     </div>
@@ -61,10 +67,11 @@ export default defineComponent({
         if (!unassertedSavedGame) router.replace({ path: "/" });
         const savedGame = unassertedSavedGame!; // Since we know this exists now.
 
-        // Add the current chapter to the saved game, if not present.
+        // Initialize the current chapter to the saved game, if not present.
         if (!savedGame.chapters.get(chapterId)) {
             savedGame.chapters.set(chapterId, {
                 library: new Set<string>(),
+                selectedAnswers: [],
             });
             save(savedGame);
         }
@@ -84,8 +91,19 @@ export default defineComponent({
         };
     },
     computed: {
+        // These properties are a pain to reference, so this simplifies it.
         library(): Set<string> {
             return this.savedGame.chapters.get(this.chapterId)!.library;
+        },
+        selectedAnswers: {
+            get(): Array<string> {
+                return this.savedGame.chapters.get(this.chapterId)!
+                    .selectedAnswers;
+            },
+            set(a: Array<string>) {
+                this.savedGame.chapters.get(this.chapterId)!.selectedAnswers =
+                    a;
+            },
         },
     },
     async created() {
@@ -99,6 +117,10 @@ export default defineComponent({
         addTolibrary(word: string): void {
             console.log("Adding word to word set:", word);
             this.library.add(word);
+            save(this.savedGame);
+        },
+        onSelectedAnswersChange(...selectedAnswers: string[]) {
+            this.selectedAnswers = selectedAnswers;
             save(this.savedGame);
         },
         followLink(sceneId: string): void {

@@ -2,6 +2,7 @@ export const SAVED_GAMES_KEY = "savedGames";
 
 export type SavedChapter = {
     library: Set<string>;
+    selectedAnswers: Array<string>;
 };
 
 export type SavedGame = {
@@ -12,6 +13,7 @@ export type SavedGame = {
 type SerializedChapter = {
     id: string;
     libraryArray: Array<string>;
+    selectedAnswers: Array<string>;
 };
 
 type SerializedSavedGame = {
@@ -94,6 +96,7 @@ function serialize(savedGame: SavedGame): SerializedSavedGame {
             id,
             // Sets are not JSON, so convert to array.
             libraryArray: Array.from(c.library),
+            selectedAnswers: c.selectedAnswers,
         });
     });
     const serializedSavedGame: SerializedSavedGame = {
@@ -111,7 +114,10 @@ function deserialize(serializedSavedGame: SerializedSavedGame): SavedGame {
     serializedSavedGame.serializedChapters.forEach((c) => {
         const library = new Set<string>();
         c.libraryArray.forEach((w) => library.add(w));
-        chapters.set(c.id, { library });
+        chapters.set(c.id, {
+            library,
+            selectedAnswers: c.selectedAnswers,
+        });
     });
     const savedGame: SavedGame = {
         id: serializedSavedGame.id,

@@ -27,25 +27,37 @@ import StoryDropdown from "./StoryDropdown.vue";
 export default defineComponent({
     components: { StoryDropdown },
     props: {
-        library: Set<string>,
-        story: String,
+        library: {
+            type: Set<string>,
+            required: true,
+        },
+        story: {
+            type: String,
+            required: true,
+        },
+        // The player-selected words.
+        selectedAnswers: {
+            type: Array<string>,
+            required: true,
+        },
+    },
+    emits: {
+        // For two-way data binding (https://vuejs.org/guide/components/v-model.html).
+        onSelectedAnswersChange: Array<string>,
     },
     data() {
-        const selectedAnswers: Array<string> = JSON.parse(
-            localStorage.getItem(`selectedAnswers`) || "[]"
-        );
         return {
             // The "correct" words in the story.
             correctAnswers: new Array<string>(),
-            // The player-selected words.
-            selectedAnswers,
             storyParts: new Array<string>(),
         };
     },
     methods: {
         onSelectedAnswerChange(selectedAnswer: string, i: number) {
+            console.log(`Selected answer "${selectedAnswer} in spot ${i}.`);
             // Store the data for the selected answer.
             this.selectedAnswers[i] = selectedAnswer;
+            this.$emit("onSelectedAnswersChange", ...this.selectedAnswers);
             console.log(
                 `${this.correctAnswerCount} / ${this.correctAnswers.length} answers correct.`
             );
@@ -53,7 +65,7 @@ export default defineComponent({
     },
     computed: {
         correctAnswerCount(): number {
-            return this.selectedAnswers.filter(
+            return this.$props.selectedAnswers.filter(
                 (a: string, i: number): boolean => a === this.correctAnswers[i]
             ).length;
         },
@@ -63,7 +75,7 @@ export default defineComponent({
         // Whether the player has filled something in for all answers.
         allSelectedAnswers(): boolean {
             return (
-                this.selectedAnswers.filter(
+                this.$props.selectedAnswers.filter(
                     (a: string | null): boolean => a != null && a.length > 0
                 ).length === this.correctAnswers.length
             );
