@@ -42,11 +42,11 @@
                 <!-- Select Chapter Menu -->
                 <div v-if="state == State.SelectChapter">
                     <button
-                        v-for="chapterId in chapterIds"
-                        @click="openChapter(chapterId)"
+                        v-for="c in chapters"
+                        @click="openChapter(c.id)"
                         class="button is-fullwidth is-large is-dark m-2"
                     >
-                        {{ chapterId }}
+                        {{ c.name }}
                     </button>
                 </div>
             </div>
@@ -71,12 +71,28 @@ enum State {
     SelectChapter,
 }
 
+type Chapter = {
+    id: string;
+    name: string;
+};
+
+// TODO: make this list dynamic.
+const chapters: Chapter[] = [
+    // {
+    //     id: "goldenidol",
+    //     name: "test chapter"
+    // }
+    {
+        id: "hotel",
+        name: "Hotel",
+    },
+];
+
 export default defineComponent({
     name: "MenuView",
     data() {
         return {
-            // TODO: make this list dynamic.
-            chapterIds: ["goldenidol", "hotel"],
+            chapters,
             selectedSavedGameId: "",
             savedGamesArray: loadAll(),
             state: State.Main,
@@ -108,6 +124,10 @@ export default defineComponent({
         },
         loadGame(savedGameId: string): void {
             this.selectedSavedGameId = savedGameId;
+            // Skip chapter select if there is only one chapter.
+            if (this.chapters.length === 1) {
+                this.openChapter(this.chapters[0].id);
+            }
             this.state = State.SelectChapter;
         },
         openChapter(chapterId: string): void {
