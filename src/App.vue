@@ -9,9 +9,6 @@ import { RouterView } from "vue-router";
 </script>
 
 <style lang="scss">
-// General styling.
-@import "./src/styles/bulma.scss";
-
 // Make the main elements full height so background color fills the window.
 html,
 body,
