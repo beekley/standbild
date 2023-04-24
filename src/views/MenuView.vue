@@ -1,7 +1,7 @@
 <template>
     <div class="container has-text-centered">
-        <p class="title is-1 is-italic has-text-danger">Standbild</p>
-        <p class="subtitle is-4 has-text-danger-dark">a mystery game</p>
+        <p class="title is-1 is-italic has-text-danger">Burning Ambition</p>
+        <p class="subtitle is-4 has-text-danger-dark">A mystery game</p>
         <div class="columns is-centered">
             <div class="column is-one-quarter">
                 <!-- Main Menu -->
@@ -34,9 +34,7 @@
                         >
                             {{ savedGame.id }}</button
                         ><br />
-                        <span class="">
-                            {{ savedGame.chapters.size }} chapters started
-                        </span>
+                        <span class="">{{ savedGameDetails(savedGame) }}</span>
                     </li>
                 </ul>
                 <!-- Select Chapter Menu -->
@@ -138,6 +136,18 @@ export default defineComponent({
         },
         reloadSavedGames(): void {
             this.savedGamesArray = loadAll();
+        },
+        savedGameDetails(savedGame: SavedGame): string {
+            // No chapter started.
+            if (savedGame.chapters.size == 0) return "Not yet started";
+            // List the number of words found across each chapter.
+            return (
+                Array.from(savedGame.chapters)
+                    .map(([id, chapter]): string => {
+                        return chapter.library.size.toString();
+                    })
+                    .join(", ") + " words found"
+            );
         },
     },
 });
