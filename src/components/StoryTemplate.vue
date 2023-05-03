@@ -6,15 +6,17 @@
                 Three or more answers are correct.
             </p>
         </div>
-        <p v-for="paragraph in storyParts">
-            <span v-for="(part, i) in paragraph">
+        <p v-for="(paragraph, i) in storyParts">
+            <span v-for="(part, j) in paragraph">
                 <!-- TODO: Check correctness against answers -->
                 <StoryDropdown
                     :word-set="library"
-                    :answer="correctAnswers[i - 1]"
-                    :stored-word="selectedAnswers[i - 1]"
-                    @onChange="onSelectedAnswerChange($event, i - 1)"
-                    v-if="i > 0"
+                    :answer="correctAnswers[answerIndex(i, j)]"
+                    :stored-word="selectedAnswers[answerIndex(i, j)]"
+                    @onChange="
+                        onSelectedAnswerChange($event, answerIndex(i, j))
+                    "
+                    v-if="j > 0"
                 />
                 {{ part }}
             </span>
@@ -65,9 +67,17 @@ export default defineComponent({
                 `${this.correctAnswerCount} / ${this.correctAnswers.length} answers correct.`
             );
         },
+        answerIndex(paragraphIndex: number, partIndex: number): number {
+            let i = partIndex - 1;
+            for (let j = 0; j < paragraphIndex; j++) {
+                i += this.storyParts[j].length;
+            }
+            return i;
+        },
     },
     computed: {
         correctAnswerCount(): number {
+            console.log(this.selectedAnswers, this.correctAnswers);
             return this.$props.selectedAnswers.filter(
                 (a: string, i: number): boolean => a === this.correctAnswers[i]
             ).length;
