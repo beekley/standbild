@@ -1,5 +1,5 @@
 <template>
-    <div class="has-text-centered">
+    <div class="content has-text-centered">
         <div v-if="allSelectedAnswers">
             <p v-if="allCorrectAnswers">All answers are correct!</p>
             <p v-else-if="correctAnswerCount >= 3">
@@ -82,6 +82,7 @@ export default defineComponent({
         },
     },
     watch: {
+        // Story is "watch"ed because this element might be created before the story is loaded.
         story(story) {
             if (!this.story) return;
 
@@ -110,6 +111,7 @@ export default defineComponent({
                     continue;
                 }
                 currentPhrase += this.story[i];
+                if (story[i] == "\n") console.log(story[i], currentPhrase);
             }
             if (currentPhrase.length > 0) this.storyParts.push(currentPhrase);
         },
