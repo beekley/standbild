@@ -6,17 +6,19 @@
                 Three or more answers are correct.
             </p>
         </div>
-        <span v-for="(part, i) in storyParts">
-            <!-- TODO: Check correctness against answers -->
-            <StoryDropdown
-                :word-set="library"
-                :answer="correctAnswers[i - 1]"
-                :stored-word="selectedAnswers[i - 1]"
-                @onChange="onSelectedAnswerChange($event, i - 1)"
-                v-if="i > 0"
-            />
-            {{ part }}
-        </span>
+        <p v-for="paragraph in storyParts">
+            <span v-for="(part, i) in paragraph">
+                <!-- TODO: Check correctness against answers -->
+                <StoryDropdown
+                    :word-set="library"
+                    :answer="correctAnswers[i - 1]"
+                    :stored-word="selectedAnswers[i - 1]"
+                    @onChange="onSelectedAnswerChange($event, i - 1)"
+                    v-if="i > 0"
+                />
+                {{ part }}
+            </span>
+        </p>
     </div>
 </template>
 
@@ -49,7 +51,8 @@ export default defineComponent({
         return {
             // The "correct" words in the story.
             correctAnswers: new Array<string>(),
-            storyParts: new Array<string>(),
+            // A list of paragraphs, which are a list of strings that represent the section of the story between the answers.
+            storyParts: new Array<Array<string>>(),
         };
     },
     methods: {
@@ -88,15 +91,17 @@ export default defineComponent({
 
             // Extract answers from the story.
             let isStory = true;
-            let currentPhrase = "";
+            let currentPart = "";
+            let paragaph = 0;
+            this.storyParts[paragaph] = [];
             for (let i = 0; i < this.story?.length; i += 1) {
                 if (this.story[i] == "{") {
                     if (!isStory)
                         throw new Error(
                             "Malformed story. Expected '}', got '{'."
                         );
-                    this.storyParts.push(currentPhrase);
-                    currentPhrase = "";
+                    this.storyParts[paragaph].push(currentPart);
+                    currentPart = "";
                     isStory = false;
                     continue;
                 }
@@ -105,15 +110,24 @@ export default defineComponent({
                         throw new Error(
                             "Malformed story. Expected '{', got '}'."
                         );
-                    this.correctAnswers.push(currentPhrase);
-                    currentPhrase = "";
+                    this.correctAnswers.push(currentPart);
+                    currentPart = "";
                     isStory = true;
                     continue;
                 }
-                currentPhrase += this.story[i];
-                if (story[i] == "\n") console.log(story[i], currentPhrase);
+
+                // Start a new paragraph if the character is a newline.
+                if (story[i] == "\n") {
+                    this.storyParts[paragaph].push(currentPart);
+                    currentPart = "";
+                    paragaph++;
+                    this.storyParts[paragaph] = [];
+                }
+                // Else add it to the part.
+                else currentPart += this.story[i];
             }
-            if (currentPhrase.length > 0) this.storyParts.push(currentPhrase);
+            if (currentPart.length > 0)
+                this.storyParts[paragaph].push(currentPart);
         },
     },
 });
